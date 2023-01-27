@@ -1,8 +1,11 @@
 package com.mysite.sbb.question;
 
+import java.security.Principal;
+
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mysite.sbb.answer.AnswerForm;
+import com.mysite.sbb.user.SiteUser;
+import com.mysite.sbb.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class QuestionController {
 
 	 private final QuestionService questionService;
+	 private final UserService userService;
 	
 //    @GetMapping("/list")
 //    public String list(Model model) {
@@ -47,18 +53,23 @@ public class QuestionController {
         return "question_detail";
     }
     
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String questionCreate(QuestionForm questionForm) {
         return "question_form";
     }
     
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult) {
+    public String questionCreate(@Valid QuestionForm questionForm
+    		,BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             return "question_form";
         }
+        SiteUser siteUser = this.userService.getUser(principal.getName());
         // TODO 질문을 저장한다.
-    	 this.questionService.create(questionForm.getSubject(), questionForm.getContent());
+    	 this.questionService.create(questionForm.getSubject()
+    			 ,questionForm.getContent(),siteUser);
         return "redirect:/question/list"; // 질문 저장후 질문목록으로 이동
     }
 }
