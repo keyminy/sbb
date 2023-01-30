@@ -20,6 +20,13 @@
 					</div>
 				</div>
 				<div class="my-3">
+					<a href="javascript:void(0);" 
+						class="recommend btn btn-sm btn-outline-secondary"
+						th:data-uri="@{|/question/vote/${question.id}|}">
+						추천
+						<span class="badge rounded-pill bg-success"
+							th:text="${#lists.size(question.voter)}"></span>
+					</a>
 					<a th:href="@{|/question/modify/${question.id}|}" 
 					class="btn btn-sm btn-outline-secondary" th:text="수정"
 					sec:authorize="isAuthenticated()"
@@ -58,6 +65,11 @@
 					</div>
 				</div> <!-- end 생성화면 -->
 				<div class="my-3">
+          <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+              th:data-uri="@{|/answer/vote/${answer.id}|}">
+              추천
+              <span class="badge rounded-pill bg-success" th:text="${#lists.size(answer.voter)}"></span>
+          </a>
 					<a th:href="@{|/answer/modify/${answer.id}|}"
 					class="btn btn-sm btn-outline-secondary"
 					sec:authorize="isAuthenticated()"
@@ -97,5 +109,16 @@
 			   };
 		  });
 		});
+		
+		const recommend_elements = document.getElementsByClassName("recommend");
+		Array.from(recommend_elements).forEach(function(element){
+			console.log(element);//a.recommend.btn.btn-sm.btn-outline-secondary
+			element.addEventListener('click', function() {
+				 if(confirm("정말로 추천하시겠습니까?")) {
+			   		location.href = this.dataset.uri;
+			   };
+		  });
+		});
+		
 	</script>
 </html>
