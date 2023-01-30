@@ -49,4 +49,16 @@ public class QuestionService {
         q.setAuthor(user);
         this.questionRepository.save(q);
     }
+    
+    public void modify(Question question,String subject,String content) {
+    	question.setSubject(subject);
+    	question.setContent(content);
+    	question.setModifyDate(LocalDateTime.now());
+    	//수정한거 save(DB저장)
+    	this.questionRepository.save(question);
+    }
+    
+    public void delete(Question question) {
+    	this.questionRepository.delete(question);
+    }
 }
